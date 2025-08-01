@@ -26,51 +26,48 @@
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic" media="all"> 
         
         <style>
-            #fake-transaction-history {
-              margin-top: 30px;
-              background-color: #111;
-              color: #0f0;
-              padding: 20px;
-              border-radius: 10px;
-              font-family: monospace;
-              overflow-x: auto;
-            }
-          
-            #fake-transaction-history h3 {
-              margin-bottom: 15px;
-              color: #0f0;
-            }
-          
-            #fake-transaction-history table {
-              width: 100%;
-              min-width: 600px;
-              border-collapse: collapse;
-            }
-          
-            #fake-transaction-history th,
-            #fake-transaction-history td {
-              padding: 8px 12px;
-              text-align: left;
-              border-bottom: 1px solid #333;
-              white-space: nowrap;
-            }
-          
-            #fake-transaction-history th {
-              color: #ff0;
-              font-weight: bold;
-            }
-          
-            #fake-transaction-history td {
-              color: #0f0;
-            }
-          
-            @media screen and (max-width: 768px) {
-              #fake-transaction-history {
-                font-size: 14px;
-                padding: 15px;
-              }
-            }
-          </style>
+  #fake-transaction-history {
+    margin: 30px 10px;
+    background-color: #111;
+    color: #0f0;
+    padding: 15px;
+    border-radius: 10px;
+    font-family: monospace;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .transaction {
+    border-bottom: 1px solid #333;
+    padding: 10px 0;
+  }
+
+  .transaction:last-child {
+    border-bottom: none;
+  }
+
+  .label {
+    color: #ff0;
+    font-weight: bold;
+    margin-right: 5px;
+  }
+
+  .value {
+    color: #0f0;
+    display: inline;
+  }
+
+  .txn-line {
+    margin-bottom: 5px;
+  }
+
+  @media (max-width: 600px) {
+    .txn-line {
+      font-size: 14px;
+    }
+  }
+</style>
         
         <script type="text/javascript">
 	WebFont.load({  google: {    families: ["Montserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic"]  }});
@@ -334,21 +331,9 @@ $("#cp").html(cp + " <span class='color-span'>MATIC</span>");
 
 <!-- 👇 Paste this right before the closing </body> tag -->
 <div id="fake-transaction-history">
-    <h3>Transaction</h3>
-    <div style="overflow-x: auto;">
-      <table id="transaction-table">
-        <thead>
-          <tr>
-            <th>Type</th>
-            <th>Amount</th>
-            <th>Wallet</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </div>
-
+  <h3>📜 Transaction History</h3>
+  <div id="transaction-list"></div>
+</div>
                         <div id="w-node-e066c9a6-8184-7907-9297-917354d3727e-6582eea1" class="w-layout-cell table-ref"> 
                             <h1 class="ref-heading">Referral Rewards :<br></h1> 
                             <div class="ref-link-wrapper"> 
@@ -459,62 +444,66 @@ $("#cp").html(cp + " <span class='color-span'>MATIC</span>");
 
   
   <script>
-    function getRandomWallet() {
-      const chars = 'abcdef0123456789';
-      let addr = '0x';
-      for (let i = 0; i < 40; i++) {
-        addr += chars[Math.floor(Math.random() * chars.length)];
-      }
-      return addr.slice(0, 6) + '...' + addr.slice(-4);
-    }
-  
-    function getRandomTxnHash() {
-      const chars = 'abcdef0123456789';
-      let hash = '0x';
-      for (let i = 0; i < 64; i++) {
-        hash += chars[Math.floor(Math.random() * chars.length)];
-      }
-      return hash.slice(0, 8) + '...' + hash.slice(-6);
-    }
-  
-    function getRandomAmount() {
-      const min = 10;
-      const max = 500000;
-      const amount = Math.random() * (max - min) + min;
-      return parseFloat(amount).toLocaleString(undefined, {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
-    }
-  
-    function getFormattedDate(offsetMinutes = 0) {
-      const date = new Date(Date.now() - offsetMinutes * 60000);
-      return date.toISOString().replace('T', ' ').slice(0, 19);
-    }
-  
-    function getRandomType() {
-      return Math.random() > 0.5 ? "Deposited" : "Withdrawn";
-    }
-  
-    function generateFakeTransactions(count = 5) {
-      const tbody = document.querySelector('#transaction-table tbody');
-      tbody.innerHTML = '';
-      for (let i = 0; i < count; i++) {
-        const type = getRandomType();
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${type}</td>
-          <td>${getRandomAmount()} POL</td>
-          <td>${getRandomWallet()}</td>
-        `;
-        tbody.appendChild(row);
-      }
-    }
-  
-    generateFakeTransactions();
-    setInterval(generateFakeTransactions, 10000);
-  </script>
+  function getRandomPOLAmount() {
+    return Math.floor(Math.random() * (500000 - 10 + 1)) + 10;
+  }
 
+  function getRandomWallet() {
+    const chars = "abcdef0123456789";
+    let wallet = "0x";
+    for (let i = 0; i < 40; i++) {
+      wallet += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return wallet;
+  }
+
+  function getRandomHash() {
+    const chars = "abcdef0123456789";
+    let hash = "0x";
+    for (let i = 0; i < 64; i++) {
+      hash += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return hash;
+  }
+
+  function getRandomType() {
+    return Math.random() < 0.5 ? "Deposit" : "Withdraw";
+  }
+
+  function getRandomDate() {
+    const now = new Date();
+    const past = new Date(now.getTime() - Math.random() * 30 * 24 * 60 * 60 * 1000);
+    return past.toLocaleDateString() + " " + past.toLocaleTimeString();
+  }
+
+  function createTransactionHTML(txn) {
+    return `
+      <div class="transaction">
+        <div class="txn-line"><span class="label">Type:</span><span class="value">${txn.type}</span></div>
+        <div class="txn-line"><span class="label">Amount:</span><span class="value">${txn.amount} POL</span></div>
+        <div class="txn-line"><span class="label">Wallet:</span><span class="value">${txn.wallet}</span></div>
+        <div class="txn-line"><span class="label">Txn Hash:</span><span class="value">${txn.hash}</span></div>
+        <div class="txn-line"><span class="label">Date:</span><span class="value">${txn.date}</span></div>
+      </div>
+    `;
+  }
+
+  function generateFakeTransactions(n = 10) {
+    const container = document.getElementById("transaction-list");
+    for (let i = 0; i < n; i++) {
+      const txn = {
+        type: getRandomType(),
+        amount: getRandomPOLAmount().toLocaleString(),
+        wallet: getRandomWallet(),
+        hash: getRandomHash(),
+        date: getRandomDate()
+      };
+      container.innerHTML += createTransactionHTML(txn);
+    }
+  }
+
+  generateFakeTransactions(12);
+</script>
 
 
 </body>
