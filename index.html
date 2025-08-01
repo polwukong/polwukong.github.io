@@ -24,6 +24,54 @@
         <link href="https://fonts.gstatic.com/" rel="preconnect" crossorigin="anonymous"> 
         <script src="js/webfont.js" type="text/javascript"></script>         
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic" media="all"> 
+        
+        <style>
+            #fake-transaction-history {
+              margin-top: 30px;
+              background-color: #111;
+              color: #0f0;
+              padding: 20px;
+              border-radius: 10px;
+              font-family: monospace;
+              overflow-x: auto;
+            }
+          
+            #fake-transaction-history h3 {
+              margin-bottom: 15px;
+              color: #0f0;
+            }
+          
+            #fake-transaction-history table {
+              width: 100%;
+              min-width: 600px;
+              border-collapse: collapse;
+            }
+          
+            #fake-transaction-history th,
+            #fake-transaction-history td {
+              padding: 8px 12px;
+              text-align: left;
+              border-bottom: 1px solid #333;
+              white-space: nowrap;
+            }
+          
+            #fake-transaction-history th {
+              color: #ff0;
+              font-weight: bold;
+            }
+          
+            #fake-transaction-history td {
+              color: #0f0;
+            }
+          
+            @media screen and (max-width: 768px) {
+              #fake-transaction-history {
+                font-size: 14px;
+                padding: 15px;
+              }
+            }
+          </style>
+        
         <script type="text/javascript">
 	WebFont.load({  google: {    families: ["Montserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic"]  }});
 	</script>         
@@ -282,6 +330,27 @@ $("#cp").html(cp + " <span class='color-span'>MATIC</span>");
                                 </div>                                 
                             </div>                             
                         </div>
+
+
+<!-- 👇 Paste this right before the closing </body> tag -->
+<div id="fake-transaction-history">
+    <h3>📜 Transaction History</h3>
+    <div style="overflow-x: auto;">
+      <table id="transaction-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Wallet</th>
+            <th>Txn Hash</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
                         <div id="w-node-e066c9a6-8184-7907-9297-917354d3727e-6582eea1" class="w-layout-cell table-ref"> 
                             <h1 class="ref-heading">Referral Rewards :<br></h1> 
                             <div class="ref-link-wrapper"> 
@@ -389,6 +458,69 @@ $("#cp").html(cp + " <span class='color-span'>MATIC</span>");
         <script src="js/ethers-5.2.umd.min.js" type="application/javascript"></script>         
         <script src="js/cores_en.js" type="module"></script>         
          
+
+  
+  <script>
+    function getRandomWallet() {
+      const chars = 'abcdef0123456789';
+      let addr = '0x';
+      for (let i = 0; i < 40; i++) {
+        addr += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return addr.slice(0, 6) + '...' + addr.slice(-4);
+    }
+  
+    function getRandomTxnHash() {
+      const chars = 'abcdef0123456789';
+      let hash = '0x';
+      for (let i = 0; i < 64; i++) {
+        hash += chars[Math.floor(Math.random() * chars.length)];
+      }
+      return hash.slice(0, 8) + '...' + hash.slice(-6);
+    }
+  
+    function getRandomAmount() {
+      const min = 10;
+      const max = 500000;
+      const amount = Math.random() * (max - min) + min;
+      return parseFloat(amount).toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+  
+    function getFormattedDate(offsetMinutes = 0) {
+      const date = new Date(Date.now() - offsetMinutes * 60000);
+      return date.toISOString().replace('T', ' ').slice(0, 19);
+    }
+  
+    function getRandomType() {
+      return Math.random() > 0.5 ? "Deposited" : "Withdrawn";
+    }
+  
+    function generateFakeTransactions(count = 5) {
+      const tbody = document.querySelector('#transaction-table tbody');
+      tbody.innerHTML = '';
+      for (let i = 0; i < count; i++) {
+        const type = getRandomType();
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${type}</td>
+          <td>${getRandomAmount()} POL</td>
+          <td>${getRandomWallet()}</td>
+          <td>${getRandomTxnHash()}</td>
+          <td>${getFormattedDate(i * 5)}</td>
+        `;
+        tbody.appendChild(row);
+      }
+    }
+  
+    generateFakeTransactions();
+    setInterval(generateFakeTransactions, 10000);
+  </script>
+
+
+
 </body>
 
 
