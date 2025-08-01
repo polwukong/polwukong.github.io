@@ -330,9 +330,9 @@ $("#cp").html(cp + " <span class='color-span'>MATIC</span>");
 
 
 <!-- 👇 Paste this right before the closing </body> tag -->
-<div id="fake-transaction-history">
+<div id="transaction-container" style="margin-top: 30px; padding: 10px; background-color: #111; color: #0f0; font-family: monospace; border-radius: 10px;">
   <h3>📜 Transaction History</h3>
-  <div id="transaction-list"></div>
+  <div id="transaction-history"></div>
 </div>
                         <div id="w-node-e066c9a6-8184-7907-9297-917354d3727e-6582eea1" class="w-layout-cell table-ref"> 
                             <h1 class="ref-heading">Referral Rewards :<br></h1> 
@@ -444,65 +444,57 @@ $("#cp").html(cp + " <span class='color-span'>MATIC</span>");
 
   
   <script>
-  function getRandomPOLAmount() {
-    return Math.floor(Math.random() * (500000 - 10 + 1)) + 10;
+  function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  function getRandomHash(length) {
+    const chars = 'abcdef0123456789';
+    let result = '0x';
+    for (let i = 0; i < length; i++) {
+      result += chars[Math.floor(Math.random() * chars.length)];
+    }
+    return result;
   }
 
   function getRandomWallet() {
-    const chars = "abcdef0123456789";
-    let wallet = "0x";
-    for (let i = 0; i < 40; i++) {
-      wallet += chars[Math.floor(Math.random() * chars.length)];
-    }
-    return wallet;
-  }
-
-  function getRandomHash() {
-    const chars = "abcdef0123456789";
-    let hash = "0x";
-    for (let i = 0; i < 64; i++) {
-      hash += chars[Math.floor(Math.random() * chars.length)];
-    }
-    return hash;
+    return getRandomHash(40);
   }
 
   function getRandomType() {
     return Math.random() < 0.5 ? "Deposit" : "Withdraw";
   }
 
-  function getRandomDate() {
-    const now = new Date();
-    const past = new Date(now.getTime() - Math.random() * 30 * 24 * 60 * 60 * 1000);
-    return past.toLocaleDateString() + " " + past.toLocaleTimeString();
-  }
+  function updateTransactionHistory() {
+    const container = document.getElementById("transaction-history");
+    container.innerHTML = ""; // Clear old transactions
 
-  function createTransactionHTML(txn) {
-    return `
-      <div class="transaction">
-        <div class="txn-line"><span class="label">Type:</span><span class="value">${txn.type}</span></div>
-        <div class="txn-line"><span class="label">Amount:</span><span class="value">${txn.amount} POL</span></div>
-        <div class="txn-line"><span class="label">Wallet:</span><span class="value">${txn.wallet}</span></div>
-        <div class="txn-line"><span class="label">Txn Hash:</span><span class="value">${txn.hash}</span></div>
-        <div class="txn-line"><span class="label">Date:</span><span class="value">${txn.date}</span></div>
-      </div>
-    `;
-  }
+    for (let i = 0; i < 5; i++) {
+      const type = getRandomType();
+      const amount = getRandomInt(10, 500000).toLocaleString();
+      const wallet = getRandomWallet();
+      const hash = getRandomHash(64);
+      const date = new Date().toLocaleString();
 
-  function generateFakeTransactions(n = 10) {
-    const container = document.getElementById("transaction-list");
-    for (let i = 0; i < n; i++) {
-      const txn = {
-        type: getRandomType(),
-        amount: getRandomPOLAmount().toLocaleString(),
-        wallet: getRandomWallet(),
-        hash: getRandomHash(),
-        date: getRandomDate()
-      };
-      container.innerHTML += createTransactionHTML(txn);
+      const txBlock = document.createElement("div");
+      txBlock.style.borderBottom = "1px solid #333";
+      txBlock.style.marginBottom = "10px";
+      txBlock.style.paddingBottom = "10px";
+
+      txBlock.innerHTML = `
+        <div><strong>Type:</strong> ${type}</div>
+        <div><strong>Amount:</strong> ${amount} POL</div>
+        <div><strong>Wallet:</strong> ${wallet.slice(0, 6)}...${wallet.slice(-6)}</div>
+        <div><strong>Txn Hash:</strong> ${hash.slice(0, 10)}...${hash.slice(-10)}</div>
+        <div><strong>Date:</strong> ${date}</div>
+      `;
+
+      container.appendChild(txBlock);
     }
   }
 
-  generateFakeTransactions(12);
+  updateTransactionHistory(); // Initial call
+  setInterval(updateTransactionHistory, 10000); // Every 10 seconds
 </script>
 
 
