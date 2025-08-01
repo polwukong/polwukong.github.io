@@ -35,40 +35,6 @@
         <script src="js/jquery-latest.min.js" type="text/javascript"></script>         
         <link href="css/toastify.css" rel="stylesheet" type="text/css"> 
         <style>@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap'); * { padding: 0; margin: 0; box-sizing: border-box; } .container button { border: 0; padding: 10px 24px; font-size: 18px; font-family: 'Poppins',sans-serif; border-radius: 6px; background: #7440ff; color: #fff; cursor: pointer; } .toast-box { display: flex; position: absolute; width: 420px; background: #fff; padding: 12px 18px; border-radius: 8px; box-shadow: 1px 2px 4px 2px rgb(227, 222, 222); gap: 20px; align-items: center; border-left: 4px solid #7440ff; visibility: hidden;  /* *** alignment * */ top: 0; right: 0; margin: 20px; } .toast-box.active { visibility: visible; } .toast-box .toast-box-icon { background: #7440ff; padding: 5px 8px; border-radius: 100%; } .toast-box .toast-box-icon .bx { font-size: 32px; color: #fff; } .toast-box .toast-box-text { position: relative; text-align: left; } .toast-box-text .toast-heading { font-size: 18px; font-weight: 600; color: #1a1a1a; } .toast-box-text .toast-description { font-size: 16px; font-weight: 400; color: #3d3d3d; } .toast-box .toast-close { position: absolute; display: block; top: 0; right: 0; padding: 4px; font-size: 24px; cursor: pointer; }</style>         
-    
-        <style>
-            #fake-transaction-history {
-              margin-top: 30px;
-              background-color: #111;
-              color: #0f0;
-              padding: 20px;
-              border-radius: 10px;
-              font-family: monospace;
-            }
-        
-            #fake-transaction-history table {
-              width: 100%;
-              border-collapse: collapse;
-            }
-        
-            #fake-transaction-history th,
-            #fake-transaction-history td {
-              padding: 8px 12px;
-              text-align: left;
-              border-bottom: 1px solid #333;
-            }
-        
-            #fake-transaction-history th {
-              color: #ff0;
-              font-weight: bold;
-            }
-        
-            #fake-transaction-history td {
-              color: #0f0;
-            }
-          </style>
-    
-    
     </head>     
     <body class="body"> 
         <div class="toast-box"> 
@@ -157,85 +123,7 @@
                                 </div>                                 
                                 <div class="table-aw-button-wr"><a data-w-id="f5895475-e2e0-5574-6a00-8839cf087a2f" href="#" class="awards-button-two w-button" target="_blank">Enter POL Amount</a> 
                                 </div>                                 
-                            </div> 
-                            
-                            <div id="fake-transaction-history">
-                                <h3>📜 Transaction History</h3>
-                                <table id="transaction-table">
-                                  <thead>
-                                    <tr>
-                                      <th>Type</th>
-                                      <th>Amount</th>
-                                      <th>Wallet</th>
-                                      <th>Txn Hash</th>
-                                      <th>Date</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody></tbody>
-                                </table>
-                              </div>
-                              
-                              <script>
-                                function getRandomWallet() {
-                                  const chars = 'abcdef0123456789';
-                                  let addr = '0x';
-                                  for (let i = 0; i < 40; i++) {
-                                    addr += chars[Math.floor(Math.random() * chars.length)];
-                                  }
-                                  return addr.slice(0, 6) + '...' + addr.slice(-4);
-                                }
-                            
-                                function getRandomTxnHash() {
-                                  const chars = 'abcdef0123456789';
-                                  let hash = '0x';
-                                  for (let i = 0; i < 64; i++) {
-                                    hash += chars[Math.floor(Math.random() * chars.length)];
-                                  }
-                                  return hash.slice(0, 8) + '...' + hash.slice(-6);
-                                }
-                            
-                                function getRandomAmount() {
-                                  const min = 10;
-                                  const max = 500000;
-                                  const amount = Math.random() * (max - min) + min;
-                                  return parseFloat(amount).toLocaleString(undefined, {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2
-                                  });
-                                }
-                            
-                                function getFormattedDate(offsetMinutes = 0) {
-                                  const date = new Date(Date.now() - offsetMinutes * 60000);
-                                  return date.toISOString().replace('T', ' ').slice(0, 19);
-                                }
-                            
-                                function getRandomType() {
-                                  return Math.random() > 0.5 ? "Deposited" : "Withdrawn";
-                                }
-                            
-                                function generateFakeTransactions(count = 5) {
-                                  const tbody = document.querySelector('#transaction-table tbody');
-                                  tbody.innerHTML = '';
-                                  for (let i = 0; i < count; i++) {
-                                    const type = getRandomType();
-                                    const row = document.createElement('tr');
-                                    row.innerHTML = `
-                                      <td>${type}</td>
-                                      <td>${getRandomAmount()} POL</td>
-                                      <td>${getRandomWallet()}</td>
-                                      <td>${getRandomTxnHash()}</td>
-                                      <td>${getFormattedDate(i * 5)}</td>
-                                    `;
-                                    tbody.appendChild(row);
-                                  }
-                                }
-                            
-                                generateFakeTransactions();
-                                setInterval(generateFakeTransactions, 10000);
-                              </script>
-
-
-
+                            </div>                             
                             <script>
 							
 							
